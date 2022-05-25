@@ -1,0 +1,38 @@
+service: serverless-assignment
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  environment:
+    DB_HOST: localhost
+    DB_PORT: 3306
+    DB_USERNAME: root
+    DB_PASSWORD: password
+    DB_DATABASE: serverless
+
+functions:
+  api:
+    handler: src/lambda.lambdaHandler
+    events:
+      - http:
+          path: /api
+          method: get
+          cors: true
+      - http:
+          path: /api/{proxy+}
+          method: any
+          cors: true
+
+custom:
+  serverless-offline:
+    # useDocker: true
+    httpPort: 4000
+  bundle:
+    ignorePackages:
+      - pg-native
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+  - serverless-bundle
